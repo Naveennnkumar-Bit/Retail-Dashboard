@@ -1,6 +1,0 @@
-streamlit>=1.50
-pandas>=2.1
-numpy
-plotly>=5.20
-python-calamine>=0.2
-openpyxl
