@@ -1,0 +1,19 @@
+# ---- secrets: NEVER in git ----
+supabase_creds.json
+.env
+*.pem
+
+# ---- business data: lives in retail_pnl.db / Supabase, not in git ----
+retail_pnl.db
+retail_pnl.db-wal
+retail_pnl.db-shm
+*.xlsx
+*.xlsm
+incoming/
+website/data/
+
+# ---- build artifacts ----
+dist/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GO DESi | Retail P&L</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231F9D5B'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='26' font-weight='bold' fill='white' text-anchor='middle'%3EGD%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="./css/style.css">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="./config.js"></script>
+</head>
+<body>
+
+<div id="login" class="loading" hidden>
+  <form class="login-box" id="login-form">
+    <div class="login-logo">GD</div>
+    <div class="login-t">Retail P&amp;L Dashboard</div>
+    <div class="login-s">Sign in to see the numbers</div>
+    <input type="email" id="login-email" class="sel" placeholder="Email" autocomplete="username" required>
+    <input type="password" id="login-pass" class="sel" placeholder="Password" autocomplete="current-password" required>
+    <button type="submit" class="btn" id="login-go">Sign in</button>
+    <div id="login-err" class="note" hidden></div>
+  </form>
+</div>
+
+<div id="loading" class="loading">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <div>Loading the P&amp;L tracker&hellip;</div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="logo">GD</div>
+    <div class="tt">
+      <h1>Retail P&amp;L Dashboard</h1>
+      <div class="sub">Revenue to net margin, from the tracker&rsquo;s Base sheet</div>
+    </div>
+    <div class="pill" id="pill">Updated &mdash;</div>
+    <button class="btn btn-ghost btn-sm" id="btn-logout" type="button" hidden style="position:relative;z-index:1">Sign out</button>
+  </header>
+
+  <div class="fbar" id="fbar">
+    <div class="f-item">
+      <label for="f-period">Period</label>
+      <select id="f-period" class="sel"></select>
+    </div>
+    <div class="f-item" id="f-custom-wrap" hidden>
+      <label for="f-from">From / to</label>
+      <span class="f-pair">
+        <select id="f-from" class="sel"></select>
+        <select id="f-to" class="sel"></select>
+      </span>
+    </div>
+    <div class="f-item">
+      <label for="f-cmp">Compare</label>
+      <select id="f-cmp" class="sel">
+        <option value="ly">Last year</option>
+        <option value="prev">Previous period</option>
+        <option value="none">None</option>
+      </select>
+    </div>
+    <div class="f-item f-grow"><label>RSM</label><div id="ms-rsm"></div></div>
+    <div class="f-item f-grow"><label>ASM / ASE</label><div id="ms-asm"></div></div>
+    <div class="f-item">
+      <label>&nbsp;</label>
+      <button class="btn" id="btn-more" type="button">Filters</button>
+    </div>
+    <div class="f-item">
+      <label>&nbsp;</label>
+      <button class="btn btn-ghost" id="btn-reset" type="button">Reset</button>
+    </div>
+    <div id="more-pop" class="pop" hidden>
+      <div class="pop-h">Market and product filters</div>
+      <div class="pop-s">These apply to sales lines. Net margin needs them cleared, because field costs are booked by RSM and ASM.</div>
+      <div class="pop-grid">
+        <div><label>Zone</label><div id="ms-zone"></div></div>
+        <div><label>State</label><div id="ms-state"></div></div>
+        <div><label>Sub-channel</label><div id="ms-chan"></div></div>
+        <div><label>Sales / Sampling</label><div id="ms-type"></div></div>
+        <div><label>Category</label><div id="ms-l0"></div></div>
+        <div><label>Brand / range</label><div id="ms-l1"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chiprow" id="chips"></div>
+  <div id="notes"></div>
+
+  <nav class="tabs" id="nav">
+    <button data-page="overview" class="on" type="button">Overview</button>
+    <button data-page="pl" type="button">P&amp;L statement</button>
+    <button data-page="team" type="button">Sales team</button>
+    <button data-page="products" type="button">Products</button>
+    <button data-page="customers" type="button">Customers &amp; regions</button>
+    <button data-page="returns" type="button">Returns &amp; sampling</button>
+    <button data-page="explorer" type="button">Explorer</button>
+    <button data-page="upload" type="button">Upload files</button>
+    <button data-page="data" type="button">Data</button>
+  </nav>
+
+  <main id="page"></main>
+
+  <footer class="foot" id="foot">
+    Net margin = gross margin &minus; transport &minus; operating expenses &minus; field team cost (SO, ASM, RSM and DB claims),
+    matching the tracker&rsquo;s YTD &amp; L3M Summary pivot.
+  </footer>
+</div>
+
+<div id="err" class="loading" hidden>
+  <div class="loading-box">
+    <div class="err-t">Couldn&rsquo;t load the data</div>
+    <div id="err-msg" class="err-m"></div>
+  </div>
+</div>
+
+<script src="./js/core.js"></script>
+<script src="./js/charts.js"></script>
+<script src="./js/views.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
