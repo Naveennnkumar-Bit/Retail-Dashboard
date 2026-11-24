@@ -1,0 +1,10 @@
+// Cloudflare Workers config: serve ONLY the website/ folder as the static site.
+// (website/data/ is gitignored, so the deployed site runs in Supabase mode behind the login.)
+{
+  "name": "retail-pnl",
+  "compatibility_date": "2026-01-01",
+  "assets": {
+    "directory": "./website",
+    "not_found_handling": "404-page"
+  }
+}
